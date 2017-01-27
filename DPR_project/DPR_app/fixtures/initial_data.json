@@ -1,0 +1,12 @@
+[
+	
+{
+ "model": "DPR_app.Employee",
+ "pk" : 1,
+ "fields" : {
+	"user": 1,
+	"first_name": "Beatrix",
+	"last_name": "Kiddo"
+ }
+}
+]

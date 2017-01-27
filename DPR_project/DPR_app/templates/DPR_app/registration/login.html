@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{%block content %}
+
+<div class="container">
+<form method="post" action="{% url 'login' %}">
+	{% csrf_token %}
+	<p>{{ form.username }}</p>
+	<p>{{ form.password }}</p>
+<input class="btn btn-success" type="submit" value="login"/>
+<input type="hidden" name="next" value="{% url 'index' %}"/>
+</form>
+{% endblock %}

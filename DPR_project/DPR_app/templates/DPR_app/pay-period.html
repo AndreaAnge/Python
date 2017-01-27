@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <h1>HTML5 Editable Table</h1>
+
+<p>Through the powers of <strong>contenteditable</strong> and some simple jQuery you can easily create a custom editable table. No need for a robust JavaScript library anymore these days.</p>
+  
+  <ul>
+    <li>An editable table that exports a hash array. Dynamically compiles rows from headers</li> 
+    <li>Simple / powerful features such as add row, remove row, move row up/down.</li>
+  </ul>
+  
+  <div id="table" class="table-editable">
+    <span class="table-add glyphicon glyphicon-plus"></span>
+  </div>
+
+	<!-- gridtem -->
+<div class="row">
+
+    {% for item in items %}
+    <div class="col-md-3">{{ item }}</div>
+
+     
+
+    {% endfor %}
+
+</div>
+  <p>{{ employee_current_pay_period }}</p>
+  <button id="export-btn" class="btn btn-primary">Export Data</button>
+  <p id="export"></p>
+</div>
+{% endblock %}
