@@ -15,9 +15,9 @@ def index(request):
 def pay_period(request):
 	template = 'pay-period.html'
 
-	employee_current_pay_period = Employee.objects.get(pk=1);
+	employee_current_pay_period = Timecard.objects.all();
 	context = {
-		'employee_current_pay_period': employee_current_pay_period,
+		'items': employee_current_pay_period,
 	}
 
 	return render(request, template, context)
