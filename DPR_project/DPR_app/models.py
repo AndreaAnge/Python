@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.conf import settings
+from django.utils.timezone import now
 
 from collections import OrderedDict
 
@@ -32,24 +33,17 @@ class PayPeriod (models.Model):
 	total_assigned_hours = models.DecimalField(max_digits = 5, decimal_places = 2),
 	
 	start_date.currentFilter= True
-
+	
 	@property
 	def entries(self):
-		return Entry.objects.filter(
-		    #project__in=self.projects.all(),
-		    start_time__gte=self.start_date,
-		    end_time__lt=self.end_date + relativedelta(days=1))
-	"""
-	All Entries worked on projects in this contract during the contract
-	period.
-	"""
+		return Entry.objects.filter( start_time__month = self.start_date.month, start_time__year = self.start_date.year )
+
 	
-    	@property
-    	def hours_worked(self):
+	def hours_worked(self):
 		"""Number of billable hours worked on the contract."""
 		if not hasattr(self, '_worked'):
-		    entries = self.entries
-		    self._worked = entries.aggregate(s=Sum('hours'))['s'] or 0
+			entries = self.entries
+			self._worked = entries.aggregate(s=Sum('hours'))['s'] or 0
 		return self._worked or 0
 
 
@@ -78,7 +72,14 @@ class Entry (models.Model):
 #		    ('view_payroll_summary', 'Can view payroll summary page'),
 #		    ('approve_timesheet', 'Can approve a verified timesheet'),
 		)
-
+	
+	def total_hours(self):
+		start = self.start_time
+        	end = self.end_time
+       		if not end:
+                	end = now
+        	delta = end - start
+		return delta
 
     	def check_overlap(self, entry_b, **kwargs):
 		"""Return True if the two entries overlap."""

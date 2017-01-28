@@ -11,8 +11,6 @@
 			Your account doesn't have access to this page. To proceed,
 			please login with an account that has access.
 		</p>
-	{% else %}
-		<p>Please login to see this page.</p>
 	{% endif %}
 {% endif %}
 <div class="container">
@@ -27,7 +25,6 @@
 		<td>{{ form.password }}</td>
 		</div>
 	<input class="btn btn-success" type="submit" value="login"/>
-	<input type="hidden" name="next" value="next"/>
 	</form>
 </div>
 {% endblock %}

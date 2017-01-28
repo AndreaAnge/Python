@@ -4,15 +4,16 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import loader
 from models import *
-from forms import LoginForm
+from forms import LoginForm, EmployeeProfileForm
 from django.contrib.auth.decorators import login_required, permission_required
-from utils import *
+from utils import * 
 
 @login_required
 def main(request):
 	template = 'main.html'
 	return render(request, template)
-	
+
+@login_required
 def index(request):
 	template = 'index.html'
 	return render(request, template)
@@ -20,32 +21,29 @@ def index(request):
 @login_required
 def pay_period(request):
 	template = 'pay-period.html'
-
-	employee_pay_periods = PayPeriod.objects.all()
+	user = request.user
+	employee = Employee.objects.filter(user = user)
+	employee_current_pay_period = get_current_pay_period(employee)
 	context = {
-		'items': employee_pay_periods,
+		'employee_current_pay_period': employee_current_pay_period,
 	}
-
-	return render(request, template, context)
-
-def login(request):
-	template = 'login.html'
-	form = LoginForm
-	context = {'form': form}
+	print(employee_current_pay_period.entries)
 	return render(request, template, context)
 
 @login_required
-def logout(request):
-	template = 'logout.html'
-	return render(request, template)
-
+def profile(request):
+	template = 'profile.html'
+	form = EmployeeProfileForm()
+	context = { 'form': form }
+	return render(request, template, context)
+	
 @permission_required('entries.can_clock_in')
 def clock_in(request):
     """For clocking the user into a project."""
     user = request.user
     # Lock the active entry for the duration of this transaction, to prevent
     # creating multiple active entries.
-    active_entry = utils.get_active_entry(user, select_for_update=True)
+    active_entry = get_active_entry(user, select_for_update=True)
 
     initial = dict([(k, v) for k, v in request.GET.items()])
     data = request.POST or None

@@ -1,4 +1,4 @@
-from models import Entry
+from models import Entry, PayPeriod
 
 def get_active_entry(user): #selectForUpdate
 	"""Returns the user's currently-active entry, or None."""
@@ -11,3 +11,12 @@ def get_active_entry(user): #selectForUpdate
 	if entries.count() > 1:
 		raise ActiveEntryError('Only one active entry is allowed.')
 	return entries[0]
+
+def get_current_pay_period(employee):
+	"""Returns the user's currently-active pay period, or None."""
+	employee_current_pay_period = PayPeriod.objects.get(employee=employee, end_date__isnull=True)
+
+	if not employee_current_pay_period:
+		return None
+		
+	return employee_current_pay_period
