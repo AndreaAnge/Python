@@ -16,7 +16,9 @@ def main(request):
 @login_required
 def index(request):
 	template = 'index.html'
-	return render(request, template)
+	pay_periods_total_worked = [[pay_period.total_hours_worked] for pay_period in PayPeriod.objects.all().order_by('-id')[:3]]
+	context = { 'pay_periods_total_worked': pay_periods_total_worked }
+	return render(request, template, context)
 
 @login_required
 def pay_period(request):
@@ -27,7 +29,6 @@ def pay_period(request):
 	context = {
 		'employee_current_pay_period': employee_current_pay_period,
 	}
-	print(employee_current_pay_period.entries)
 	return render(request, template, context)
 
 @login_required

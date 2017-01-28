@@ -94,12 +94,11 @@
     <!-- /#wrapper -->
     
     <!-- watch on order! -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js" crossorigin="anonymous"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
     <!-- Bootstrap Core JavaScript -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.js" integrity="sha256-HptdWaetAoQSrTP9GZVVxKovdIq1C3MmKazLYQ7JnL4=" crossorigin="anonymous"></script>
-    <script src="{% static 'DPR_app/js/site.js' %}"></script>
-
+           {% block extra_head %}{% endblock %}
 </body>
 
 </html>
