@@ -6,6 +6,6 @@ admin.autodiscover()
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^accounts/', include('django.contrib.auth.urls')),
 	url(r'', include('DPR_app.urls')),
+    url(r'^accounts/', include('django.contrib.auth.urls')),
 ]

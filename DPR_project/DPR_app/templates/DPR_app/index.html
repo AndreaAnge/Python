@@ -2,9 +2,7 @@
 
 {% block extra_head %}
 <script type="text/javascript">
-$( function() {
-	console.log({{ pay_periods_total_worked }});
-	
+$( function() {	
     var data = {
 		type:'bar',
         data: {
@@ -34,16 +32,55 @@ $( function() {
     
     var ctx = document.getElementById("bar-chart").getContext("2d");
     var barChart = new Chart(ctx, data);
+    
+    $('#clockin-btn').click(function () {
+		$.get(this.dataset.url, function(response) {
+			$('.alert').text(response);
+			$('#clockin-btn').addClass('disabled');
+			$('#clockout-btn').removeClass('disabled');
+		});		
+	});
+	
+	$('#clockout-btn').click(function () {
+		$.get(this.dataset.url, function(response) {
+			$('.alert').text(response);
+			$('#clockout-btn').addClass('disabled');
+			$('#clockin-btn').removeClass('disabled');
+		});		
+	});
 });
 </script>
 {% endblock %}
 
+{% block header_content %}
+<div class="row">
+	<br style="clear: both;" />
+	<p class="alert"></p>
+	<div class="col-lg-4">
+		<button class="btn btn-lg btn-primary" id="clockin-btn" data-url="{% url 'clock-in' %}">Clock In</button>
+		<button class="btn btn-lg btn-danger" id="clockout-btn" data-url="{% url 'clock-out' %}">Clock oUT</button>
+	</DIV>
+</div>
+{% endblock %}
+
 {% block content %}
 <div class="row">
-	<div class="col-lg-12">
+	<div class="col-lg-4">
 		<div class="panel panel-green">
 		    <div class="panel-heading">
-				<h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>Recent Pay Periods</h3>
+				<h3 class="panel-title"><i class="glyphicon glyphicon-eye-open"></i> Who's in</h3>
+			</div>
+			<div class="panel-body">
+				{% for employee in clocked_in_employees %}
+				<td>{{ employee.get_full_name }}</td>
+				{% endfor %}
+		    </div>
+		</div>
+	</div>
+		<div class="col-lg-8">
+		<div class="panel panel-green">
+		    <div class="panel-heading">
+				<h3 class="panel-title"><i class="fa fa-bar-chart-o"></i> Recent Pay Periods</h3>
 			</div>
 			<div class="panel-body">
 				<canvas id="bar-chart"></canvas>

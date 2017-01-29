@@ -8,7 +8,8 @@ from collections import OrderedDict
 class Employee (models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	hire_date = models.DateField()  #date employee was hired
-
+	clocked_in = models.BooleanField(default=False)
+	
 	def get_full_name(self):
 		return self.user.first_name + self.user.last_name
 
@@ -31,11 +32,12 @@ class PayPeriod (models.Model):
 	#pay_rate = models.DecimalField(max_digits=5, decimal_places=2)
 	total_assigned_hours = models.DecimalField(max_digits = 5, decimal_places = 2),
 	
-	start_date.currentFilter= True
+	class Meta:
+		ordering = ('-start_date',)
 	
 	@property
 	def entries(self):
-		return Entry.objects.filter( start_time__month = self.start_date.month, start_time__year = self.start_date.year )
+		return Entry.objects.filter(start_time__month = self.start_date.month, start_time__year = self.start_date.year)
 
 	@property
 	def total_hours_worked(self): #total billable hours worked
@@ -77,7 +79,6 @@ class Entry (models.Model):
 		return delta.days * 24 + delta.seconds / 3600.0
 
 	def check_overlap(self, entry_b, **kwargs):
-		"""Return True if the two entries overlap."""
 		entry_a = self
 		# if entries are open, consider them to be closed right now
 		if not entry_a.end_time or not entry_b.end_time:

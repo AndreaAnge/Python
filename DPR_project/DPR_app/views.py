@@ -1,12 +1,12 @@
 import datetime
 from django.shortcuts import render_to_response
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from django.template import loader
 from models import *
 from forms import LoginForm, EmployeeProfileForm
 from django.contrib.auth.decorators import login_required, permission_required
 from utils import * 
+from django.http import HttpResponse
 
 @login_required
 def main(request):
@@ -17,7 +17,11 @@ def main(request):
 def index(request):
 	template = 'index.html'
 	pay_periods_total_worked = [[pay_period.total_hours_worked] for pay_period in PayPeriod.objects.all().order_by('-id')[:3]]
-	context = { 'pay_periods_total_worked': pay_periods_total_worked }
+#	clocked_in_employees = get_clocked_in_employees()
+	context = { 
+		'pay_periods_total_worked': pay_periods_total_worked,
+		'page_title': 'Dashboard'
+	}
 	return render(request, template, context)
 
 @login_required
@@ -28,6 +32,7 @@ def pay_period(request):
 	employee_current_pay_period = get_current_pay_period(employee)
 	context = {
 		'employee_current_pay_period': employee_current_pay_period,
+		'page_title': 'Pay Period Overview'
 	}
 	return render(request, template, context)
 
@@ -38,51 +43,26 @@ def profile(request):
 	context = { 'form': form }
 	return render(request, template, context)
 	
-@permission_required('entries.can_clock_in')
 def clock_in(request):
-    """For clocking the user into a project."""
     user = request.user
-    # Lock the active entry for the duration of this transaction, to prevent
-    # creating multiple active entries.
-    active_entry = get_active_entry(user, select_for_update=True)
-
-    initial = dict([(k, v) for k, v in request.GET.items()])
-    data = request.POST or None
-    form = ClockInForm(data, initial=initial, user=user, active=active_entry)
-    if form.is_valid():
-        entry = form.save()
-        message = 'You have clocked into {0} on {1}.'.format(
-            entry.activity.name, entry.project)
-        messages.info(request, message)
-        return HttpResponseRedirect(reverse('dashboard'))
-
-    return render(request, 'timepiece/entry/clock_in.html', {
-        'form': form,
-        'active': active_entry,
-    })
-
-
-@permission_required('entries.can_clock_out')
-def clock_out(request):
-    entry = utils.get_active_entry(request.user)
-    if not entry:
-        message = "Not clocked in"
-        messages.info(request, message)
-        return HttpResponseRedirect(reverse('dashboard'))
-    if request.POST:
-        form = ClockOutForm(request.POST, instance=entry)
-        if form.is_valid():
-            entry = form.save()
-            message = 'You have clocked out of {0} on {1}.'.format(
-                entry.activity.name, entry.project)
-            messages.info(request, message)
-            return HttpResponseRedirect(reverse('dashboard'))
-        else:
-            message = 'Please correct the errors below.'
-            messages.error(request, message)
+    active_entry = get_active_entry(user)
+    if active_entry:
+        message = 'You are already clocked in!'
     else:
-        form = ClockOutForm(instance=entry)
-    return render(request, 'timepiece/entry/clock_out.html', {
-        'form': form,
-        'entry': entry,
-})
+		employee = Employee.objects.filter(user = user)
+		employee_current_pay_period = get_current_pay_period(employee)
+		entry = Entry(start_time=datetime.now())
+		entry.save()
+		employee_current_pay_period.entries.add(entry)
+		message = 'You have clocked in!'
+    return HttpResponse(message)
+
+def clock_out(request):
+    entry = get_active_entry(request.user)
+    if not entry:
+		message = "Not clocked in"
+    else:
+		entry.end_time = datetime.now()
+		entry.save()
+		message = 'You have clocked out!.'
+    return HttpResponse(message)
