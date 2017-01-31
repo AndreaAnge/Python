@@ -1,0 +1,8 @@
+{% for entry in employee_current_pay_period.entries %}
+	<tr class="active">
+		<td>{{ entry.start_time | date:"d M Y" }}</td>
+		<td>{{ entry.start_time | date:"H:i"}}</td>
+		<td>{{ entry.end_time | date:"H:i" }}</td>
+		<td>{{ entry.delta_formatted }}</td>
+	</tr>
+{% endfor %}

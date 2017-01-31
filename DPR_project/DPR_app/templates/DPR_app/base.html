@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en"  style="bottom: 0">
 <head>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, heihgt=device.heihgt, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
 
@@ -14,17 +13,17 @@
     {% load static %}
 
     <link href="{% static 'DPR_app/css/thirdParty/bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'DPR_app/css/thirdParty/sb-admin.css' %}" rel="stylesheet">
+	<link href="{% static 'DPR_app/css/thirdParty/sb-admin.css' %}" rel="stylesheet">
     <link href="{% static 'DPR_app/css/thirdParty/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
 
 </head>
 
 <body>
-    <div id="wrapper">
+    <div id="wrapper" >
         <!-- Navigation -->
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="navbar-header">
-                <a class="navbar-brand" href="index.html">Timecheck</a>
+                <a class="navbar-brand" href="{% url 'index' %}">Timecheck</a>
             </div>
             <!-- Profile dropdown -->
             <ul class="nav navbar-right top-nav">
@@ -48,56 +47,46 @@
                     </ul>
                 </li>
             </ul>
-            <!-- Left Menu-->
-			{% if user.is_authenticated %}
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul class="nav navbar-nav side-nav">
-                    <li>
-                        <a href="{% url 'index' %}"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'pay-period' %}"><i class="fa fa-fw fa-wrench"></i> Pay Period</a>
-                    </li>
-                </ul>
-            </div>
-			{% endif %}
-            <!-- /.navbar-collapse -->
-        </nav>
-        <div id="page-wrapper">
-            <div class="container-fluid">	
-               <!-- Page Heading -->
-                <div class="row">
-                    <div class="col-lg-12">
-						<div class="page-header">
-							{% block header_content %}{% endblock %}
-						</div>
-                        <ol class="breadcrumb">
-                            <li>
-                                <i class="fa fa-dashboard"></i><a href="{% url 'index' %}"> Dashboard</a>
-                            </li>
-                            <li class="active">
-                                <i class="fa fa-file"> {{ page_title }}</i>
-                            </li>
-                        </ol>
-                    </div>
-                </div>
-                <!-- /.row -->
-			{% block content %}
+		<!-- Left Menu-->
+		{% if user.is_authenticated %}
+		<div class="collapse navbar-collapse navbar-ex1-collapse">
+			<ul class="nav navbar-nav side-nav">
+				<li>
+					<a href="{% url 'index' %}"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
+				</li>
+				<li>
+					<a href="{% url 'pay-period' %}"><i class="fa fa-fw fa-file"></i> Pay Period</a>
+				</li>
+			</ul>
+		</div>
+		{% endif %}
+	</nav>
+	<div id="page-wrapper" style="height: 90vh !important">
+		<div class="container-fluid">	
+		   <!-- Page Heading -->
+			<div class="row" >
+				{% block header_content %}{% endblock %}
+				<hr/>
+				<ol class="breadcrumb">
+					<li>
+						<i class="fa fa-dashboard"></i><a href="{% url 'index' %}"> Dashboard</a>
+					</li>
+					{% if page_title != "Dashboard" %}
+					<li class="active">
+						<i class="fa fa-file"> {{ page_title }}</i>
+					</li>
+					{% endif %}
+				</ol>
+			</div>
+		</div>
+		{% block content %}{% endblock %}
+	</div>
+<!-- watch on order! -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.js" crossorigin="anonymous"></script>
+<script src="{% static 'DPR_app/js/moment.min.js' %}" crossorigin="anonymous"></script>
+{% block extra_head %}{% endblock %}
 
-			{% endblock %}
-            </div>
-            <!-- /.container-fluid -->
-        </div>
-        <!-- /#page-wrapper -->
-    </div>
-    <!-- /#wrapper -->
-    
-    <!-- watch on order! -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js" crossorigin="anonymous"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
-    <!-- Bootstrap Core JavaScript -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.js" integrity="sha256-HptdWaetAoQSrTP9GZVVxKovdIq1C3MmKazLYQ7JnL4=" crossorigin="anonymous"></script>
-           {% block extra_head %}{% endblock %}
 </body>
-
 </html>

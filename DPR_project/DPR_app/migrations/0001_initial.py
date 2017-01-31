@@ -11,8 +11,9 @@ class Migration(SchemaMigration):
         # Adding model 'Employee'
         db.create_table(u'DPR_app_employee', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
             ('hire_date', self.gf('django.db.models.fields.DateField')()),
+            ('clocked_in', self.gf('django.db.models.fields.BooleanField')(default=False)),
         ))
         db.send_create_signal(u'DPR_app', ['Employee'])
 
@@ -21,9 +22,10 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('start_date', self.gf('django.db.models.fields.DateTimeField')()),
             ('end_date', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-            ('status', self.gf('django.db.models.fields.CharField')(default=u'upcoming', max_length=32)),
+            ('status', self.gf('django.db.models.fields.CharField')(default='upcoming', max_length=32)),
             ('employee', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['DPR_app.Employee'])),
             ('hourly_rate', self.gf('django.db.models.fields.DecimalField')(max_digits=5, decimal_places=2)),
+            ('total_hours_assigned', self.gf('django.db.models.fields.DecimalField')(default=160.0, max_digits=5, decimal_places=2)),
         ))
         db.send_create_signal(u'DPR_app', ['PayPeriod'])
 
@@ -51,25 +53,27 @@ class Migration(SchemaMigration):
     models = {
         u'DPR_app.employee': {
             'Meta': {'object_name': 'Employee'},
+            'clocked_in': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'hire_date': ('django.db.models.fields.DateField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
+            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['auth.User']", 'unique': 'True'})
         },
         u'DPR_app.entry': {
-            'Meta': {'ordering': "(u'-start_time',)", 'object_name': 'Entry'},
+            'Meta': {'ordering': "('-start_time',)", 'object_name': 'Entry'},
             'end_time': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'pay_period': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['DPR_app.PayPeriod']"}),
             'start_time': ('django.db.models.fields.DateTimeField', [], {})
         },
         u'DPR_app.payperiod': {
-            'Meta': {'object_name': 'PayPeriod'},
+            'Meta': {'ordering': "('-start_date',)", 'object_name': 'PayPeriod'},
             'employee': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['DPR_app.Employee']"}),
             'end_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'hourly_rate': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '2'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'start_date': ('django.db.models.fields.DateTimeField', [], {}),
-            'status': ('django.db.models.fields.CharField', [], {'default': "u'upcoming'", 'max_length': '32'})
+            'status': ('django.db.models.fields.CharField', [], {'default': "'upcoming'", 'max_length': '32'}),
+            'total_hours_assigned': ('django.db.models.fields.DecimalField', [], {'default': '160.0', 'max_digits': '5', 'decimal_places': '2'})
         },
         u'auth.group': {
             'Meta': {'object_name': 'Group'},

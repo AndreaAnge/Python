@@ -15,7 +15,6 @@
   &:hover {
     color: #f00;
   }
-}
 
 .table-up, .table-down {
   color: #007;
@@ -24,7 +23,6 @@
   &:hover {
     color: #00f;
   }
-}
 
 .table-add {
   color: #070;
@@ -36,4 +34,8 @@
   &:hover {
     color: #0b0;
   }
-}
+  
+.clock-btn {
+	width: 105px !important;
+	height: 25px;
+  }
